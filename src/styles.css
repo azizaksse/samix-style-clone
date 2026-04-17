@@ -32,6 +32,7 @@
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-dark: var(--brand-dark);
+  --color-success: var(--success);
 }
 
 :root {
