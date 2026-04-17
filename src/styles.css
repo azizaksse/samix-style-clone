@@ -59,6 +59,13 @@
   --brand: oklch(0.72 0.16 230);
   --brand-foreground: oklch(1 0 0);
   --brand-dark: oklch(0.22 0.04 245);
+  --success: oklch(0.7 0.17 155);
+  --gradient-hero: linear-gradient(135deg, oklch(0.95 0.04 230) 0%, oklch(0.98 0.02 220) 50%, oklch(1 0 0) 100%);
+  --gradient-primary: linear-gradient(135deg, oklch(0.72 0.16 230), oklch(0.65 0.18 245));
+  --gradient-cta: linear-gradient(135deg, oklch(0.72 0.16 230) 0%, oklch(0.62 0.2 250) 100%);
+  --shadow-soft: 0 4px 20px -4px color-mix(in oklab, oklch(0.22 0.04 245) 12%, transparent);
+  --shadow-elegant: 0 20px 50px -20px color-mix(in oklab, oklch(0.72 0.16 230) 35%, transparent);
+  --shadow-glow: 0 0 40px color-mix(in oklab, oklch(0.72 0.16 230) 25%, transparent);
   --sidebar: oklch(0.984 0.003 247.858);
   --sidebar-foreground: oklch(0.129 0.042 264.695);
   --sidebar-primary: oklch(0.208 0.042 265.755);
