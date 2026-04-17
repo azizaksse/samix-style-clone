@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { HelpCircle } from "lucide-react";
 
 const QUESTIONS = [
   {
@@ -34,18 +35,28 @@ const QUESTIONS = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="bg-accent/30 py-12">
+    <section id="faq" className="bg-accent/30 py-16">
       <div className="mx-auto max-w-3xl px-4">
-        <h2 className="mb-8 text-center text-3xl font-extrabold">أسئلة و أجوبة</h2>
-        <Accordion type="single" collapsible className="space-y-2">
+        <div className="mb-10 text-center">
+          <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <HelpCircle className="h-6 w-6" />
+          </div>
+          <h2 className="text-3xl font-extrabold sm:text-4xl">أسئلة و أجوبة</h2>
+          <p className="mt-2 text-muted-foreground">كل ما تحتاج معرفته عن منتج Samix</p>
+        </div>
+        <Accordion type="single" collapsible className="space-y-3">
           {QUESTIONS.map((item, i) => (
             <AccordionItem
               key={i}
               value={`q-${i}`}
-              className="rounded-lg border bg-card px-4"
+              className="rounded-xl border bg-card px-5 shadow-sm transition-shadow hover:shadow-md"
             >
-              <AccordionTrigger className="text-right font-semibold">{item.q}</AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+              <AccordionTrigger className="text-right text-base font-bold hover:no-underline">
+                {item.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground leading-relaxed">
+                {item.a}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

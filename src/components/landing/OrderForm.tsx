@@ -38,24 +38,42 @@ export function OrderForm() {
   };
 
   return (
-    <section id="order-form" className="bg-accent/40 py-10">
+    <section id="order-form" className="bg-accent/40 py-12">
       <div className="mx-auto max-w-2xl px-4">
-        <div className="rounded-2xl border bg-card p-5 shadow-sm sm:p-7">
+        <div
+          className="rounded-3xl border bg-card p-5 sm:p-8"
+          style={{ boxShadow: "var(--shadow-elegant)" }}
+        >
           <div className="mb-5 flex flex-col items-center gap-3 text-center">
-            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
-              عرض محدود
+            <span
+              className="rounded-full px-4 py-1.5 text-xs font-extrabold text-primary-foreground"
+              style={{ background: "var(--gradient-cta)" }}
+            >
+              ⚡ عرض محدود
             </span>
             <Countdown />
           </div>
 
-          <h2 className="mb-1 text-center text-2xl font-extrabold">
+          <h2 className="mb-1 text-center text-2xl font-extrabold sm:text-3xl">
             Samix - سيروم إنبات الشعر و اللحية
           </h2>
-          <p className="mb-4 text-center text-sm text-muted-foreground">30مل</p>
+          <p className="mb-5 text-center text-sm text-muted-foreground">30مل</p>
 
-          <div className="mb-6 flex items-center justify-center gap-3">
-            <span className="text-3xl font-black text-primary">{unit * qty} دج</span>
+          <div className="mb-6 flex items-center justify-center gap-3 rounded-2xl bg-primary/5 py-4">
+            <span
+              className="text-3xl font-black sm:text-4xl"
+              style={{
+                background: "var(--gradient-primary)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              {unit * qty} دج
+            </span>
             <span className="text-lg text-muted-foreground line-through">{oldUnit * qty} دج</span>
+            <span className="rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-bold text-destructive">
+              -{Math.round((1 - unit / oldUnit) * 100)}%
+            </span>
           </div>
 
           {submitted ? (
@@ -134,7 +152,8 @@ export function OrderForm() {
 
               <Button
                 type="submit"
-                className="h-14 w-full bg-primary text-base font-bold hover:bg-primary/90"
+                className="h-14 w-full rounded-full text-base font-bold text-primary-foreground transition-all hover:scale-[1.01]"
+                style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-elegant)" }}
               >
                 <ShoppingCart className="ml-2 h-5 w-5" />
                 إشتري الآن - الدفع عند الاستلام
