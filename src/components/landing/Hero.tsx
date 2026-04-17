@@ -27,7 +27,7 @@ export function Hero() {
           </div>
 
           <h1 className="text-4xl font-black leading-[1.15] tracking-tight sm:text-5xl lg:text-6xl">
-            <span className="bg-gradient-to-l from-primary to-blue-600 bg-clip-text text-transparent">Samix</span>
+            <span className="bg-gradient-to-l from-primary to-primary/70 bg-clip-text text-transparent">Samix</span>
             <br />
             <span className="text-foreground">سيروم إنبات الشعر</span>
             <br />
