@@ -20,19 +20,33 @@ export function FeatureCards() {
     },
   ];
   return (
-    <section id="features" className="py-12">
-      <div className="mx-auto grid max-w-5xl grid-cols-1 gap-5 px-4 md:grid-cols-3">
-        {items.map(({ icon: Icon, title, desc }) => (
-          <Card key={title} className="border-primary/20">
-            <CardContent className="flex flex-col items-center p-6 text-center">
-              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-                <Icon className="h-8 w-8" />
-              </div>
-              <h3 className="mb-2 text-lg font-bold">{title}</h3>
-              <p className="text-sm text-muted-foreground">{desc}</p>
-            </CardContent>
-          </Card>
-        ))}
+    <section id="features" className="py-16">
+      <div className="mx-auto max-w-5xl px-4">
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-extrabold sm:text-4xl">لماذا Samix؟</h2>
+          <p className="mt-2 text-muted-foreground">ثقة آلاف العملاء في الجزائر</p>
+        </div>
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          {items.map(({ icon: Icon, title, desc }) => (
+            <Card
+              key={title}
+              className="group relative overflow-hidden border-primary/10 transition-all hover:-translate-y-1 hover:border-primary/40"
+              style={{ boxShadow: "var(--shadow-soft)" }}
+            >
+              <div className="absolute inset-x-0 top-0 h-1" style={{ background: "var(--gradient-primary)" }} />
+              <CardContent className="flex flex-col items-center p-7 text-center">
+                <div
+                  className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl text-primary-foreground transition-transform group-hover:scale-110"
+                  style={{ background: "var(--gradient-primary)", boxShadow: "var(--shadow-glow)" }}
+                >
+                  <Icon className="h-8 w-8" />
+                </div>
+                <h3 className="mb-2 text-lg font-extrabold">{title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
   );
