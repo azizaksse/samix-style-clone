@@ -152,7 +152,8 @@ export function OrderForm() {
 
               <Button
                 type="submit"
-                className="h-14 w-full bg-primary text-base font-bold hover:bg-primary/90"
+                className="h-14 w-full rounded-full text-base font-bold text-primary-foreground transition-all hover:scale-[1.01]"
+                style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-elegant)" }}
               >
                 <ShoppingCart className="ml-2 h-5 w-5" />
                 إشتري الآن - الدفع عند الاستلام
