@@ -1,4 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { SettingsProvider } from "@/hooks/useSettings";
 
 import appCss from "../styles.css?url";
@@ -68,7 +69,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <Scripts />
       </body>
@@ -76,10 +77,14 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
+
 function RootComponent() {
   return (
-    <SettingsProvider>
-      <Outlet />
-    </SettingsProvider>
+    <ConvexProvider client={convex}>
+      <SettingsProvider>
+        <Outlet />
+      </SettingsProvider>
+    </ConvexProvider>
   );
 }

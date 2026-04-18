@@ -68,27 +68,81 @@ const STATUS_ICONS: Record<string, React.ReactNode> = {
   cancelled: <XCircle className="h-3.5 w-3.5" />,
 };
 
-const APPS_SCRIPT_CODE = `function setupHeaders() {
-  const sheet = SpreadsheetApp.openById('1-UFxxq5vvW86uRr-vyCw8MkTJq1qFcTbRaZfQan86kk').getSheets()[0];
+const APPS_SCRIPT_CODE = `// ====================================================
+// SCRIPT 1 — الطلبات المكتملة (Main Orders)
+// ====================================================
+
+function setupHeaders() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   sheet.getRange("A1:H1").setValues([["التاريخ", "الاسم واللقب", "رقم الهاتف", "الولاية", "البلدية / العنوان", "الكمية", "السعر الإجمالي", "الحالة"]]);
   sheet.getRange("A1:H1").setFontWeight("bold").setBackground("#d9ead3").setFontSize(12);
   sheet.setFrozenRows(1);
 }
 
 function doGet(e) {
-  const sheet = SpreadsheetApp.openById('1-UFxxq5vvW86uRr-vyCw8MkTJq1qFcTbRaZfQan86kk').getSheets()[0];
-  
-  if (!e || !e.parameter) return ContentService.createTextOutput("Works!");
+  if (!e || !e.parameter || !e.parameter.phone) {
+    return ContentService.createTextOutput("ok");
+  }
+
+  var phone = (e.parameter.phone || "").trim();
+
+  // Server-side validation: Algerian mobile only (05/06/07 + 8 digits)
+  if (!/^(05|06|07)\\d{8}$/.test(phone)) {
+    return ContentService.createTextOutput("invalid");
+  }
+
+  // Block obviously fake numbers (all same digit)
+  if (/^(\\d)\\1{9}$/.test(phone)) {
+    return ContentService.createTextOutput("fake");
+  }
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  sheet.appendRow([
+    new Date().toLocaleString("fr-DZ"),
+    e.parameter.name    || "",
+    phone,
+    e.parameter.wilaya  || "",
+    e.parameter.address || "",
+    e.parameter.qty     || "",
+    e.parameter.total   || "",
+    "جديد"
+  ]);
+  return ContentService.createTextOutput("ok");
+}`;
+
+const APPS_SCRIPT_LEADS = `// ====================================================
+// SCRIPT 2 — الطلبات غير المكتملة (Not-Ended Leads)
+// ====================================================
+
+function setupHeaders() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  sheet.getRange("A1:D1").setValues([["التاريخ", "الاسم", "رقم الهاتف", "الحالة"]]);
+  sheet.getRange("A1:D1").setFontWeight("bold").setBackground("#fce5cd").setFontSize(12);
+  sheet.setFrozenRows(1);
+}
+
+function doGet(e) {
+  if (!e || !e.parameter || !e.parameter.phone) {
+    return ContentService.createTextOutput("ok");
+  }
+
+  var phone = (e.parameter.phone || "").trim();
+  if (!/^(05|06|07)\d{8}$/.test(phone)) {
+    return ContentService.createTextOutput("invalid");
+  }
+
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  // Avoid duplicate leads for the same phone
+  var data = sheet.getDataRange().getValues();
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][2] === phone) return ContentService.createTextOutput("dup");
+  }
 
   sheet.appendRow([
-    new Date().toLocaleString(),
-    e.parameter.name || '',
-    e.parameter.phone || '',
-    e.parameter.wilaya || '',
-    e.parameter.address || '',
-    e.parameter.qty || '',
-    e.parameter.total ? e.parameter.total + ' دج' : '',
-    "جديد" // Status column default
+    new Date().toLocaleString("fr-DZ"),
+    e.parameter.name || "",
+    phone,
+    "لم يُكمل الطلب"
   ]);
   return ContentService.createTextOutput("ok");
 }`;
@@ -152,6 +206,7 @@ function SettingsTab() {
   const [saved, setSaved] = useState(false);
   const [draft, setDraft] = useState({ ...settings });
   const [showScript, setShowScript] = useState(false);
+  const [showLeadsScript, setShowLeadsScript] = useState(false);
 
   const handleSave = () => {
     update(draft);
@@ -161,7 +216,7 @@ function SettingsTab() {
 
   const handleReset = () => {
     reset();
-    setDraft({ unitPrice: 3200, oldUnitPrice: 3900, googleSheetUrl: "", bannerEnabled: true, bannerMessage: "التوصيل متوفر إلى", facebookPixelId: "", tiktokPixelId: "" });
+    setDraft({ unitPrice: 3200, oldUnitPrice: 3900, googleSheetUrl: "", googleSheetNotEndedUrl: "", bannerEnabled: true, bannerMessage: "التوصيل متوفر إلى", facebookPixelId: "", tiktokPixelId: "" });
   };
 
   return (
@@ -281,6 +336,60 @@ function SettingsTab() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Not-Ended Orders Sheet */}
+      <div className="rounded-2xl border bg-card p-6 shadow-sm border-orange-200">
+        <h3 className="font-extrabold text-base mb-1 flex items-center gap-2">
+          <Sheet className="h-5 w-5 text-orange-500" />
+          ربط Google Sheets — الطلبات غير المكتملة
+        </h3>
+        <p className="text-xs text-muted-foreground mb-4">
+          يُرسَل تلقائياً عندما يكتب الزبون رقم هاتفه دون إتمام الطلب. مفيد لاسترجاع العملاء المحتملين.
+        </p>
+        <div className="space-y-1.5">
+          <label className="text-sm font-semibold">رابط Apps Script — ورقة الطلبات غير المكتملة</label>
+          <input
+            type="url"
+            value={draft.googleSheetNotEndedUrl}
+            onChange={(e) => setDraft({ ...draft, googleSheetNotEndedUrl: e.target.value })}
+            className="w-full rounded-xl border bg-background px-4 py-2.5 text-left text-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            placeholder="https://script.google.com/macros/s/..."
+            dir="ltr"
+          />
+        </div>
+        {draft.googleSheetNotEndedUrl && (
+          <div className="mt-3 flex items-center gap-2 rounded-lg bg-orange-50 px-3 py-2 text-xs text-orange-700 font-semibold">
+            <CheckCircle2 className="h-4 w-4" />
+            الطلبات غير المكتملة ستُرسَل عند كتابة رقم الهاتف فقط
+          </div>
+        )}
+
+        {/* Leads Script Guide */}
+        <button
+          onClick={() => setShowLeadsScript(!showLeadsScript)}
+          className="mt-2 flex items-center gap-2 text-sm font-semibold text-orange-600 hover:underline"
+        >
+          <Info className="h-4 w-4" />
+          {showLeadsScript ? "إخفاء" : "عرض"} كود الإعداد (Script 2 — الطلبات غير المكتملة)
+        </button>
+        {showLeadsScript && (
+          <div className="space-y-3 rounded-xl border border-orange-200 bg-orange-50/40 p-4 text-sm">
+            <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
+              <li>أنشئ <strong>ملف Google Sheets جديد ومنفصل</strong> للطلبات غير المكتملة</li>
+              <li>اذهب إلى <strong>Extensions → Apps Script</strong></li>
+              <li>امسح الكود القديم والصق الكود التالي:</li>
+            </ol>
+            <pre className="overflow-x-auto rounded-lg bg-background border p-4 text-xs font-mono text-left" dir="ltr">
+              {APPS_SCRIPT_LEADS}
+            </pre>
+            <ol className="list-decimal list-inside space-y-2 text-muted-foreground" start={4}>
+              <li>اضغط <strong>Deploy → New Deployment → Web App</strong></li>
+              <li>اختر <strong>Who has access: Anyone</strong></li>
+              <li>انسخ رابط الـ Deployment والصقه في الحقل أعلاه</li>
+            </ol>
+          </div>
+        )}
       </div>
 
       {/* Pixels */}

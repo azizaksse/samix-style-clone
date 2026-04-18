@@ -4,6 +4,7 @@ export interface AppSettings {
   unitPrice: number;
   oldUnitPrice: number;
   googleSheetUrl: string;
+  googleSheetNotEndedUrl: string;
   bannerEnabled: boolean;
   bannerMessage: string;
   facebookPixelId: string;
@@ -14,6 +15,7 @@ const DEFAULTS: AppSettings = {
   unitPrice: 3200,
   oldUnitPrice: 3900,
   googleSheetUrl: "",
+  googleSheetNotEndedUrl: "",
   bannerEnabled: true,
   bannerMessage: "التوصيل متوفر إلى",
   facebookPixelId: "",
@@ -40,7 +42,15 @@ interface SettingsContextValue {
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }): React.ReactElement {
-  const [settings, setSettings] = useState<AppSettings>(load);
+  // Always start with DEFAULTS so SSR and first client render match.
+  // localStorage value is applied after mount to avoid hydration mismatch.
+  const [settings, setSettings] = useState<AppSettings>(DEFAULTS);
+
+  useEffect(() => {
+    // Sync from localStorage after mount (client-only)
+    const saved = load();
+    setSettings(saved);
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
