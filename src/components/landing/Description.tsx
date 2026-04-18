@@ -1,18 +1,19 @@
 import { Leaf, Droplets, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const IMAGES = [
-  "https://assets.lightfunnels.com/account-49036/images_library/0f4f2fbd-886c-49a5-b981-6a5f5e8dde03.8d0fbe5d-1e0b-49ee-904c-551cfc21646b.SAMIX-LP_06_new.jpg%20(1).webp",
-  "https://assets.lightfunnels.com/account-49036/images_library/b66af022-fe8a-4bc0-89aa-3f25263394ba.4fa0af0a-1a89-4e14-a93e-8c7c1a2fe5ef.SAMIX-LP_05%20(1).webp",
-  "https://assets.lightfunnels.com/account-49036/images_library/9daeff43-0418-485b-b51a-16204997e471.78600bbe-ccbf-4688-bfa1-efb0abe3d8f8.SAMIX-LP_04_new.jpg%20(1).webp",
-  "https://assets.lightfunnels.com/account-49036/images_library/fb56f36c-26ed-4fcf-9873-cd3a3caef6a3.8abb3e1f-61aa-48d9-b82a-81ffa1c031d2.SAMIX-LP_03_neww.jpg%20(1).webp",
+  "/Screen-Shot-2024-08-01-at-12.11.35-PM-1024x557.png",
+  "/Screen-Shot-2024-08-01-at-12.11.42-PM-1024x557.png",
+  "/2.png",
+  "/IMG_20260417_221222_711.PNG",
 ];
 
 const INGREDIENTS = [
-  { icon: Droplets, name: "زيت الخروع", desc: "يحفّز نمو الشعر و يقوي البصيلات" },
-  { icon: Leaf, name: "زيت الأرغان", desc: "يرطّب و يغذي عمق فروة الرأس" },
-  { icon: Droplets, name: "زيت الجوجوبا", desc: "يوازن إفراز الزيوت الطبيعية" },
-  { icon: Leaf, name: "إكليل الجبل", desc: "ينشّط الدورة الدموية في فروة الرأس" },
-  { icon: Sparkles, name: "البيوتين", desc: "فيتامين أساسي لصحة الشعر" },
+  { icon: Droplets, name: "زيت السعد", desc: "يضعف جذور الشعر ويقلل من نموه تدريجياً" },
+  { icon: Leaf, name: "زيت النمل", desc: "يبطئ نمو الشعر الزائد بشكل ملحوظ" },
+  { icon: Droplets, name: "زيت شجرة الشاي", desc: "يهدئ البشرة ويمنع التهاب المسام" },
+  { icon: Leaf, name: "خلاصة الصبار", desc: "يرطب البشرة بعمق بعد إزالة الشعر" },
+  { icon: Sparkles, name: "فيتامين E", desc: "يغذي البشرة ويحافظ على مرونتها" },
 ];
 
 export function Description() {
@@ -28,12 +29,12 @@ export function Description() {
 
         <div className="mx-auto max-w-3xl space-y-4 text-base leading-loose text-foreground/90">
           <p>
-            <strong className="text-primary">Samix</strong> هو سيروم طبيعي مصمم خصيصا لإنبات اللحية و الشعر،
-            يعمل على تقوية البصيلات و ملء الفراغات في وقت قصير.
+            <strong className="text-primary">Rova</strong> هو زيت طبيعي مصمم خصيصا ليكون بديلاً فعالاً وآمناً لليزر،
+            يعمل على إضعاف بصيلات الشعر وتقليل نموه تدريجياً.
           </p>
           <p>
-            تركيبته الغنية تحتوي على زيوت فعّالة و فيتامينات تعالج الضعف و توقف التساقط، و
-            تعطي مظهر أكثف و أقوى للحية و الشعر.
+            تركيبته الطبية الغنية تحتوي على زيوت فعّالة تعالج جذور الشعر، و
+            تمنحك بشرة ناعمة وخالية من الشعر الزائد المزعج لفترات طويلة.
           </p>
         </div>
 
@@ -59,13 +60,23 @@ export function Description() {
 
         <div className="mt-10 grid grid-cols-2 gap-3 md:grid-cols-4">
           {IMAGES.map((src, i) => (
-            <img
-              key={i}
-              src={src}
-              alt={`Samix product ${i + 1}`}
-              loading="lazy"
-              className="aspect-square w-full rounded-xl border object-cover transition-transform hover:scale-[1.02]"
-            />
+            <Dialog key={i}>
+              <DialogTrigger asChild>
+                <img
+                  src={src}
+                  alt={`Rova product ${i + 1}`}
+                  loading="lazy"
+                  className="aspect-square w-full rounded-xl border object-cover transition-transform hover:scale-[1.02] cursor-pointer"
+                />
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl p-1 bg-transparent border-none shadow-none text-white [&>button]:text-white">
+                <img
+                  src={src}
+                  alt={`Rova product ${i + 1} expanded`}
+                  className="h-auto w-full rounded-lg object-contain"
+                />
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
       </div>

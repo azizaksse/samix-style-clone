@@ -6,7 +6,7 @@ export function FeatureCards() {
     {
       icon: Users,
       title: "أكثر من 2000 زبون راضي",
-      desc: "آلاف العملاء جربوا Samix و حصلوا على نتائج مذهلة.",
+      desc: "آلاف العملاء جربوا Rova و حصلوا على بشرة نقية.",
     },
     {
       icon: Wallet,
@@ -23,7 +23,7 @@ export function FeatureCards() {
     <section id="features" className="py-16">
       <div className="mx-auto max-w-5xl px-4">
         <div className="mb-10 text-center">
-          <h2 className="text-3xl font-extrabold sm:text-4xl">لماذا Samix؟</h2>
+          <h2 className="text-3xl font-extrabold sm:text-4xl">لماذا Rova؟</h2>
           <p className="mt-2 text-muted-foreground">ثقة آلاف العملاء في الجزائر</p>
         </div>
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">

@@ -9,7 +9,9 @@ import { FeatureCards } from "@/components/landing/FeatureCards";
 import { FAQ } from "@/components/landing/FAQ";
 import { Footer } from "@/components/landing/Footer";
 import { StickyCTA } from "@/components/landing/StickyCTA";
+import { InfiniteBanner } from "@/components/landing/InfiniteBanner";
 import { Toaster } from "@/components/ui/sonner";
+import { PixelManager } from "@/components/PixelManager";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -18,7 +20,9 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <PixelManager />
       <Header />
+      <InfiniteBanner />
       <main>
         <Hero />
         <OrderForm />

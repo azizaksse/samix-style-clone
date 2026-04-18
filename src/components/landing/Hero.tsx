@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Star, ShieldCheck, Truck, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const HERO_IMG =
-  "https://assets.lightfunnels.com/account-49036/images_library/bd9e3001-9ccf-4fd5-b3d5-6ac019ae1f87.cbff2868-ebe6-4ee1-859a-a7d3fc81f706.SAMIX-LP_01_new.jpg.webp";
+  "/HOMA PAGE PIC.png";
 
 export function Hero() {
   const scrollToForm = () => {
@@ -27,15 +28,15 @@ export function Hero() {
           </div>
 
           <h1 className="text-4xl font-black leading-[1.15] tracking-tight sm:text-5xl lg:text-6xl">
-            <span className="bg-gradient-to-l from-primary to-primary/70 bg-clip-text text-transparent">Samix</span>
+            <span className="bg-gradient-to-l from-primary to-primary/70 bg-clip-text text-transparent">Rova</span>
             <br />
-            <span className="text-foreground">سيروم إنبات الشعر</span>
+            <span className="text-foreground">زيت بديل</span>
             <br />
-            <span className="text-foreground">و اللحية</span>
+            <span className="text-foreground">الليزر</span>
           </h1>
 
           <p className="mx-auto mt-5 max-w-lg text-base text-muted-foreground md:mx-0 md:text-lg">
-            تركيبة طبيعية 100% تقوّي البصيلات، تملأ الفراغات و تمنحك كثافة ملحوظة في وقت قصير.
+            زيت طبيعي يضعف نمو الشعر تدريجياً ليكون بديلاً فعالاً وآمناً لليزر. تمتعي ببشرة ناعمة خالية من الشعر زائد.
           </p>
 
           <div className="mt-5 flex flex-wrap items-center justify-center gap-4 md:justify-start">
@@ -75,15 +76,26 @@ export function Hero() {
             aria-hidden
           />
           <div
-            className="overflow-hidden rounded-[2rem] border border-white/40 bg-white/30 p-2 backdrop-blur"
+            className="overflow-hidden rounded-[2rem] border border-white/40 bg-white/30 p-2 backdrop-blur cursor-pointer transition-transform hover:scale-[1.02]"
             style={{ boxShadow: "var(--shadow-elegant)" }}
           >
-            <img
-              src={HERO_IMG}
-              alt="Samix - سيروم إنبات الشعر و اللحية"
-              className="h-auto w-full rounded-[1.5rem] object-cover"
-              loading="eager"
-            />
+            <Dialog>
+              <DialogTrigger asChild>
+                <img
+                  src={HERO_IMG}
+                  alt="Rova - زيت بديل الليزر"
+                  className="h-auto w-full rounded-[1.5rem] object-cover"
+                  loading="eager"
+                />
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl p-1 bg-transparent border-none shadow-none text-white [&>button]:text-white">
+                <img
+                  src={HERO_IMG}
+                  alt="Rova - زيت بديل الليزر expanded"
+                  className="h-auto w-full rounded-lg object-contain"
+                />
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="absolute -bottom-4 -left-4 rounded-2xl border bg-card px-4 py-3 shadow-lg sm:-left-6">
             <div className="flex items-center gap-3">

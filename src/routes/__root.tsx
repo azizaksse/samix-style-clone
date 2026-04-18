@@ -1,4 +1,5 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { SettingsProvider } from "@/hooks/useSettings";
 
 import appCss from "../styles.css?url";
 
@@ -29,16 +30,16 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Samix - سيروم إنبات الشعر و اللحية - 30مل" },
+      { title: "Rova - زيت بديل الليزر - 30مل" },
       {
         name: "description",
         content:
-          "سيروم Samix الطبيعي لإنبات اللحية والشعر، يقوّي البصيلات ويملأ الفراغات. الدفع عند الاستلام في كل ولايات الجزائر.",
+          "زيت Rova الطبيعي المخصص كبديل لليزر، يضعف بصيلات الشعر المزعجة. الدفع عند الاستلام في كل ولايات الجزائر.",
       },
-      { property: "og:title", content: "Samix - سيروم إنبات الشعر و اللحية" },
+      { property: "og:title", content: "Rova - زيت بديل الليزر" },
       {
         property: "og:description",
-        content: "سيروم طبيعي لإنبات اللحية والشعر بنتائج سريعة. الدفع عند الاستلام.",
+        content: "زيت طبيعي يضعف نمو الشعر كبديل لليزر. الدفع عند الاستلام.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -76,5 +77,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
-  return <Outlet />;
+  return (
+    <SettingsProvider>
+      <Outlet />
+    </SettingsProvider>
+  );
 }

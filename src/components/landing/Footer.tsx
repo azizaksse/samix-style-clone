@@ -12,12 +12,11 @@ export function Footer() {
           <div>
             <div className="mb-3 flex items-center gap-2.5">
               <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-primary-foreground"
-                style={{ background: "var(--gradient-primary)" }}
+                className="flex h-10 w-10 overflow-hidden items-center justify-center rounded-xl bg-white text-primary-foreground"
               >
-                <Sparkles className="h-5 w-5" />
+                <img src="/LOGO .webp" alt="Rova Logo" className="h-full w-full object-cover" />
               </div>
-              <span className="text-lg font-extrabold text-white">Beauty Spot</span>
+              <span className="text-lg font-extrabold text-white">Rova</span>
             </div>
             <p className="text-sm leading-relaxed text-white/70">
               منتجات العناية الطبيعية الأصلية، توصيل لكل ولايات الجزائر مع الدفع عند الاستلام.
@@ -47,7 +46,7 @@ export function Footer() {
 
         <div className="mt-10 border-t border-white/10 pt-6 text-center">
           <p className="text-xs text-white/60">
-            Copyright © 2025 Beauty Spot. جميع الحقوق محفوظة.
+            Copyright © 2025 Rova. جميع الحقوق محفوظة.
           </p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,24 +16,71 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { toast } from "sonner";
-import { CheckCircle2, ShoppingCart } from "lucide-react";
+import { CheckCircle2, ShoppingCart, Loader2 } from "lucide-react";
 import { WILAYAS } from "./wilayas";
 import { Countdown } from "./Countdown";
+import { useSettings } from "@/hooks/useSettings";
+import { fbEvent, ttEvent } from "@/components/PixelManager";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 export function OrderForm() {
+  const { settings } = useSettings();
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [qty, setQty] = useState(1);
-  const unit = 3200;
-  const oldUnit = 3900;
+  const [checkoutFired, setCheckoutFired] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const unit = settings.unitPrice;
+  const oldUnit = settings.oldUnitPrice;
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
-    if (!form.get("name") || !form.get("phone") || !form.get("wilaya")) {
+    const name = form.get("name") as string;
+    const phone = form.get("phone") as string;
+    const wilaya = form.get("wilaya") as string;
+    const address = form.get("address") as string;
+
+    if (!name || !phone || !wilaya) {
       toast.error("الرجاء تعبئة جميع الحقول المطلوبة");
       return;
     }
+
+    const orderData = {
+      name,
+      phone,
+      wilaya,
+      address,
+      qty,
+      total: unit * qty,
+      date: new Date().toLocaleString("ar-DZ"),
+    };
+
+    setLoading(true);
+
+    // Send to Google Sheets if URL is configured
+    if (settings.googleSheetUrl) {
+      try {
+        const params = new URLSearchParams();
+        Object.entries(orderData).forEach(([key, value]) => {
+          params.append(key, String(value));
+        });
+
+        await fetch(`${settings.googleSheetUrl}?${params.toString()}`, {
+          method: "GET",
+          mode: "no-cors",
+        });
+      } catch (err) {
+        console.error("Google Sheets submission failed:", err);
+      }
+    }
+
+    setLoading(false);
     setSubmitted(true);
+    // Fire Purchase event
+    fbEvent("Purchase", { value: unit * qty, currency: "DZD", content_name: "Rova Oil" });
+    ttEvent("CompletePayment", { value: unit * qty, currency: "DZD" });
     toast.success("تم استلام طلبك بنجاح، سنتصل بك قريبا");
   };
 
@@ -55,7 +102,7 @@ export function OrderForm() {
           </div>
 
           <h2 className="mb-1 text-center text-2xl font-extrabold sm:text-3xl">
-            Samix - سيروم إنبات الشعر و اللحية
+            Rova - زيت بديل الليزر
           </h2>
           <p className="mb-5 text-center text-sm text-muted-foreground">30مل</p>
 
@@ -68,9 +115,9 @@ export function OrderForm() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              {unit * qty} دج
+              {(unit * qty).toLocaleString()} دج
             </span>
-            <span className="text-lg text-muted-foreground line-through">{oldUnit * qty} دج</span>
+            <span className="text-lg text-muted-foreground line-through">{(oldUnit * qty).toLocaleString()} دج</span>
             <span className="rounded-full bg-destructive/15 px-2 py-0.5 text-xs font-bold text-destructive">
               -{Math.round((1 - unit / oldUnit) * 100)}%
             </span>
@@ -85,7 +132,15 @@ export function OrderForm() {
               </p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-4"
+            onFocus={() => {
+              if (!checkoutFired) {
+                setCheckoutFired(true);
+                fbEvent("InitiateCheckout", { content_name: "Rova Oil" });
+                ttEvent("InitiateCheckout", { content_name: "Rova Oil" });
+              }
+            }}
+          >
               <h3 className="text-center text-lg font-bold">
                 للطلب، الرجاء إدخال التفاصيل
               </h3>
@@ -152,14 +207,34 @@ export function OrderForm() {
 
               <Button
                 type="submit"
-                className="h-14 w-full rounded-full text-base font-bold text-primary-foreground transition-all hover:scale-[1.01]"
+                disabled={loading}
+                className="h-14 w-full rounded-full text-base font-bold text-primary-foreground transition-all hover:scale-[1.01] disabled:opacity-70"
                 style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-elegant)" }}
               >
-                <ShoppingCart className="ml-2 h-5 w-5" />
-                إشتري الآن - الدفع عند الاستلام
+                {loading ? (
+                  <Loader2 className="ml-2 h-5 w-5 animate-spin" />
+                ) : (
+                  <ShoppingCart className="ml-2 h-5 w-5" />
+                )}
+                {loading ? "جاري الإرسال..." : "إشتري الآن - الدفع عند الاستلام"}
               </Button>
             </form>
           )}
+        </div>
+        {/* Warning image below form */}
+        <div className="mx-auto mt-5 max-w-2xl px-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <img
+                src="/WARNING.webp"
+                alt="تحذير هام"
+                className="w-full cursor-pointer rounded-2xl border shadow-sm transition-transform hover:scale-[1.01] object-contain"
+              />
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl p-1 bg-transparent border-none shadow-none [&>button]:text-white">
+              <img src="/WARNING.webp" alt="تحذير" className="w-full rounded-xl" />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </section>
